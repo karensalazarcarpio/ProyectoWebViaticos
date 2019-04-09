@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      >
+    <ui:composition template="./estructura.xhtml">
+        <ui:define name="title">
+            <h:outputText value="Inicio"></h:outputText>
+        </ui:define>
+        <ui:define name="content">
+            <h:form id="formularioForm">
+                <p:panel id="pnlFormulario" header="RegistroFormulario"  style="margin-bottom:20px;width:100%">
+                    <h:panelGrid columns="4">
+                        <p:outputLabel value="#{msg['formularioBean.id_funcionario']}:" />
+                        
+                        <p:outputLabel value="#{msg['formularioBean.gestion']}:" />
+                        <p:inputText value="#{formularioBean.formulario.gestion}" required="true" />
+                        <p:outputLabel value="#{msg['formularioBean.justificacion']}:" />
+                        <p:inputTextarea value="#{formularioBean.formulario.justificacion}" required="true" />
+
+                        <p:outputLabel value="#{msg['formularioBean.motivo_viaje']}:" />
+                        <p:inputTextarea value="#{formularioBean.formulario.motivoViaje}" required="true" />
+
+                        <p:outputLabel value="#{msg['formularioBean.']}:" />
+                        <p:inputText value="#{formularioBean.formulario.estado}" required="true" />
+                        <p:commandButton value="Guardar" icon="fa fa-user-plus" style="margin-right:20px;" action="#{formularioBean.guardar()}"
+                                         update="@form :frmDetalle">
+                        </p:commandButton>
+
+                    </h:panelGrid>
+
+                </p:panel>
+            </h:form>    
+            <h:form id="frmDetalle">
+                <p:panel id="basic" header="DetalleFormulario"  style="margin-bottom:20px;width:100%" >
+                    <p:commandButton value="Adicionar" icon="fa fa-user-plus" style="margin-right:20px;" action="#{formularioBean.adicionar()}"
+                                     update="@form :frmDetalle">
+                    </p:commandButton>
+                    <p:dataTable value="#{formularioBean.itemsDetalle}" var="item">
+
+                        <p:column headerText="#{msg['formulario.idOrigen']}" sortable="true"
+                                  sortBy="#{item.idOrigen}" filterable="true" filterMatchMode="contains"
+                                  filterBy="#{item.idOrigen}">
+                            <p:outputLabel value="#{item.idOrigen}" />
+                            <p:inputText value="#{item.idOrigen}" />
+                        </p:column>
+
+                        <p:column headerText="#{msg['formulario.idDestino']}" sortable="true"
+                                  sortBy="#{item.idDestino}" filterable="true" filterMatchMode="contains"
+                                  filterBy="#{item.idDestino}">
+                            <p:outputLabel value="#{item.idDestino}" />
+                            <p:inputText value="#{item.idDestino}" />
+                        </p:column> 
+                        <p:column headerText="#{msg['formulario.fechaPartida']}" sortable="true"
+                                  sortBy="#{item.fechaPartida}" filterable="true" filterMatchMode="contains"
+                                  filterBy="#{item.fechaPartida}">
+                            <p:outputLabel value="#{item.fechaPartida}" />
+                            <p:inputText value="#{item.fechaPartida}" />
+                        </p:column>
+                        <p:column headerText="#{msg['formulario.fechaRetorno']}" sortable="true"
+                                  sortBy="#{item.fechaRetorno}" filterable="true" filterMatchMode="contains"
+                                  filterBy="#{item.fechaRetorno}">
+                            <p:outputLabel value="#{item.fechaRetorno}" />
+                            <p:inputText value="#{item.fechaRetorno}" />
+                        </p:column>     
+
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>

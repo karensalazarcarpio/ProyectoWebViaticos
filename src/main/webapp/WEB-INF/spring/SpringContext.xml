@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-3.1.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+           http://www.springframework.org/schema/data/jpa
+           http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+	<context:component-scan base-package="bo.com.cognos.java.proyecto.services" />
+	<bean id="entityManagerFactory" 
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    	<property name="persistenceUnitName" value="repoJpaFactory"/>
+    	<property name="dataSource" ref="dataSource"/>
+    	<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+    	</property>
+    	<property name="jpaProperties">
+        	<props>
+     			<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQL9Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+        	</props>
+     	</property>
+     	<property name="packagesToScan">
+            <array>
+                <value>bo.com.cognos.java.proyecto.model</value>
+            </array>
+        </property>
+    </bean>
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+	    <property name="jndiName" value="java:/ViaticosDS"/>
+	</bean>
+	<jpa:repositories
+	            base-package="bo.com.cognos.java.proyecto.repositories"
+	            entity-manager-factory-ref="entityManagerFactory"
+	            transaction-manager-ref="transactionManager"/>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<bean id="transactionManager"
+	        class="org.springframework.orm.jpa.JpaTransactionManager">
+	    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
+
+<!-- bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+  <property name="triggers">
+    <list>
+      <ref bean="cadaMinutoJobTrigger" />
+    </list>
+  </property>
+  <property name="jobFactory">
+  	<bean class="bo.com.cognos.java.proyecto.jobs.AutowiringSpringBeanJobFactory"/>
+  </property>
+</bean>
+<bean name="cadaMinutoJob"
+	class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+  <property name="jobClass" value="bo.com.cognos.java.proyecto.jobs.CadaMinutoJob"/>
+</bean>
+<bean id="cadaMinutoJobTrigger"
+class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+  <property name="jobDetail" ref="cadaMinutoJob" />
+  <property name="cronExpression" value="0 * * * * ?" />
+  <property name="description" value="Job de cada día a las XX:XX:00" />
+</bean -->
+
+</beans>

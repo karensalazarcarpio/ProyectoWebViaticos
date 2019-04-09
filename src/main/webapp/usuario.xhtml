@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://xmlns.jcp.org/jsf/html"
+xmlns:f="http://xmlns.jcp.org/jsf/core"
+xmlns:p="http://primefaces.org/ui"
+>
+<h:head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>Insert title here</title>
+</h:head>
+<h:body>
+<h:form id="frmBusqueda">
+	<p:growl />
+	<p:panel id="pnlBusqueda" rendered="#{!usuarioBean.muestraDetalle}">
+		<h:panelGrid columns="4">
+			<p:outputLabel value="#{msg['general.filtro']}" />
+			<p:inputText value="#{usuarioBean.filtro}"/>
+			<p:commandButton value="#{msg['general.buscar']}"
+				action="#{usuarioBean.buscar}" update="@form" />
+		</h:panelGrid>
+		<p:dataTable value="#{usuarioBean.items}" var="item">
+			<p:column>
+				<p:commandButton icon="fa fa-taxi" title="${msg['general.ver']}"
+					action="#{usuarioBean.mostrar(item)}" update="@form :frmDetalle" />
+				<p:commandButton icon="fa fa-edit" title="${msg['general.editar']}" 
+					action="#{usuarioBean.editar(item)}" update="@form :frmDetalle"/>
+				<p:commandButton icon="fa fa-trash" title="${msg['general.eliminar']}" 
+					update="@form :frmBorrar" oncomplete="PF('dlgEliminar').show();">
+					<f:setPropertyActionListener value="item" target="#{usuarioBean.item}" />					
+				</p:commandButton>
+			</p:column>
+			<p:column headerText="#{msg['usuario.nombreUsuario']}" sortable="true"
+				sortBy="#{item.login}" filterable="true" filterMatchMode="contains"
+				filterBy="#{item.login}">
+				<p:outputLabel value="#{item.login}" />			
+			</p:column>
+			<p:column headerText="#{msg['usuario.contrasena']}" sortable="true" 
+				sortBy="#{item.password}" filterable="true" filterBy="#{item.password}">
+				<p:outputLabel value="#{item.password}" title="#{item.password}" />			
+			</p:column>
+			<p:column headerText="#{msg['usuario.habilitado']}" sortable="true"
+				sortBy="#{item.habilitado}" filterable="true">
+				<p:selectBooleanCheckbox value="#{item.habilitado}"
+					disabled="true" />			
+			</p:column>
+		</p:dataTable>
+		<p:commandButton value="#{msg['general.nuevo']}"
+			action="#{usuarioBean.crearNuevo}" update="@form :frmDetalle" />
+				 
+	
+	</p:panel>	
+</h:form>
+<h:form id="frmDetalle">
+	<p:panel id="pnlDetalle" rendered="#{usuarioBean.muestraDetalle}">
+		<h:panelGrid columns="2">
+			<p:outputLabel value="#{msg['usuario.nombreUsuario']}:" />
+			<p:inputText value="#{usuarioBean.item.login}" required="true" 
+				disabled="#{!usuarioBean.editando or !usuarioBean.nuevo}" />
+			<p:outputLabel value="#{msg['usuario.contrasena']}:" />
+			<p:inputText value="#{usuarioBean.item.password}"
+			 	required="true" disabled="#{!usuarioBean.editando}" />
+			<p:outputLabel value="#{msg['usuario.habilitado']}:" />
+			<p:selectBooleanCheckbox value="#{usuarioBean.item.habilitado}" disabled="#{!usuarioBean.editando}" />
+		</h:panelGrid>
+		<p:commandButton value="#{msg['general.guardar']}" icon="fa fa-save"
+			action="#{usuarioBean.guardar}" update="@form :frmBusqueda"
+			disabled="#{!usuarioBean.editando}" />
+		<p:commandButton value="#{msg['general.cancelar']}" icon="fa fa-arrow-left"
+			immediate="true" actionListener="#{usuarioBean.cancelar}"
+			update="@form :frmBusqueda"
+			 />
+			 <br /><br />
+			 <p:commandButton value="Eliminar" id="cmdEliminar" 
+				rendered="#{!usuarioBean.editando and usuarioBean.item ne null}"
+				update=":frmBorrar" oncomplete="PF('dlgEliminar').show();"				
+				>	
+			</p:commandButton>
+			 
+	</p:panel>
+</h:form>
+<h:form id="frmBorrar">
+	<p:dialog header="Confirmación eliminación" widgetVar="dlgEliminar" minHeight="40">
+	    <p:outputLabel value="#{msg['general.confirmacionEliminacion']}" />
+	    <br /><br />
+	    <p:commandButton value="Si" action="#{usuarioBean.eliminar}" update="@form :frmBusqueda :frmDetalle" />
+	    <p:commandButton value="No" type="button" onclick="PF('dlgEliminar').hide();" />
+	</p:dialog>
+</h:form>
+</h:body>
+</html>

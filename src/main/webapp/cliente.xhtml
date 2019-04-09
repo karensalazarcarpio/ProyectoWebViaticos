@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      >
+    <ui:composition template="./estructura.xhtml">
+        <ui:define name="title">
+            <h:outputText value="Inicio"></h:outputText>
+        </ui:define>
+        <ui:define name="content">
+            <h:form id="frmBusqueda">
+                <p:growl />
+                <p:panel id="pnlBusqueda" rendered="#{!clienteBean.muestraDetalle}">
+                    <h:panelGrid columns="4">
+                        <p:outputLabel value="#{msg['general.filtro']}" />
+                        <p:inputText value="#{clienteBean.filtro}"/>
+                        <p:commandButton value="#{msg['general.buscar']}"
+                                         action="#{clienteBean.buscar}" update="@form" />
+                    </h:panelGrid>
+                    <p:dataTable value="#{clienteBean.items}" var="item">
+                        <p:column>
+                            <p:commandButton icon="fa fa-taxi" title="${msg['general.ver']}"
+                                             action="#{clienteBean.mostrar(item)}" update="@form :frmDetalle" />
+                            <p:commandButton icon="fa fa-edit" title="${msg['general.editar']}" 
+                                             action="#{clienteBean.editar(item)}" update="@form :frmDetalle"/>
+                            <p:commandButton icon="fa fa-trash" title="${msg['general.eliminar']}" 
+                                             update="@form :frmBorrar" oncomplete="PF('dlgEliminar').show();">
+                                <f:setPropertyActionListener value="#{item}" target="#{clienteBean.item}" />					
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="#{msg['cliente.nit']}" sortable="true"
+                                  sortBy="#{item.nit}" filterable="true" filterMatchMode="contains"
+                                  filterBy="#{item.nit}">
+                            <p:outputLabel value="#{item.nit}" />			
+                        </p:column>
+                        <p:column headerText="#{msg['cliente.razonSocial']}" sortable="true" 
+                                  sortBy="#{item.razonSocial}" filterable="true" filterBy="#{item.razonSocial}">
+                            <p:outputLabel value="#{item.razonSocial}" />			
+                        </p:column>
+                        <p:column headerText="#{msg['cliente.telefono']}" sortable="true" 
+                                  sortBy="#{item.telefono}" filterable="true" filterBy="#{item.telefono}">
+                            <p:outputLabel value="#{item.telefono}" />			
+                        </p:column>
+                        <p:column headerText="#{msg['cliente.email']}" sortable="true" 
+                                  sortBy="#{item.email}" filterable="true" filterBy="#{item.email}">
+                            <p:outputLabel value="#{item.email}" />			
+                        </p:column>			
+                    </p:dataTable>
+                    <p:commandButton value="#{msg['general.nuevo']}"
+                                     action="#{clienteBean.crearNuevo}" update="@form :frmDetalle" />
+
+
+                </p:panel>	
+            </h:form>
+            <h:form id="frmDetalle">
+                <p:panel id="pnlDetalle" rendered="#{clienteBean.muestraDetalle}">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="#{msg['cliente.nit']}:" />
+                        <p:inputText value="#{clienteBean.item.nit}" required="true" 
+                                     disabled="#{!clienteBean.editando or !clienteBean.nuevo}" />
+                        <p:outputLabel value="#{msg['cliente.razonSocial']}:" />
+                        <p:inputText value="#{clienteBean.item.razonSocial}"
+                                     required="true" disabled="#{!clienteBean.editando}" />
+                        <p:outputLabel value="#{msg['cliente.telefono']}:" />
+                        <p:inputText value="#{clienteBean.item.telefono}" required="true" 
+                                     disabled="#{!clienteBean.editando or !clienteBean.nuevo}" />
+                        <p:outputLabel value="#{msg['cliente.email']}:" />
+                        <p:inputText value="#{clienteBean.item.email}"
+                                     required="true" disabled="#{!clienteBean.editando}" />
+                        <p:outputLabel value="#{msg['cliente.otros']}:" />
+                        <p:inputTextarea value="#{clienteBean.item.otros}" rows="5"
+                                         required="true" disabled="#{!clienteBean.editando}" />
+                    </h:panelGrid>
+                    <p:commandButton value="#{msg['general.guardar']}" icon="fa fa-save"
+                                     action="#{clienteBean.guardar}" update="@form :frmBusqueda"
+                                     disabled="#{!clienteBean.editando}" />
+                    <p:commandButton value="#{msg['general.cancelar']}" icon="fa fa-arrow-left"
+                                     immediate="true" actionListener="#{clienteBean.cancelar}"
+                                     update="@form :frmBusqueda"
+                                     />
+                    <br /><br />
+                    <p:commandButton value="Eliminar" id="cmdEliminar" 
+                                     rendered="#{!clienteBean.editando and clienteBean.item ne null}"
+                                     update=":frmBorrar" oncomplete="PF('dlgEliminar').show();"				
+                                     >	
+                    </p:commandButton>
+
+                </p:panel>
+            </h:form>
+            <h:form id="frmBorrar">
+                <p:dialog header="Confirmación eliminación" widgetVar="dlgEliminar" minHeight="40">
+                    <p:outputLabel value="#{msg['general.confirmacionEliminacion']}" />
+                    <br /><br />
+                    <p:commandButton value="Si" action="#{clienteBean.eliminar}" update="@form :frmBusqueda :frmDetalle" />
+                    <p:commandButton value="No" type="button" onclick="PF('dlgEliminar').hide();" />
+                </p:dialog>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
